@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  backend:
+    container_name: backendnirvana
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: backendnirvana 
+    profiles: ["backend", "dev"]
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      DB_NAME: default
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - mongodb
+      - redis
+
+  mongodb:
+    container_name: mongodbnirvana
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+
+  frontend:
+    container_name: frontendnirvana
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    profiles: ["frontend", "dev"]
+    image: react
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
