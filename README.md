@@ -42,6 +42,12 @@ Additionally this is extensible, if we run into new errors we can add them into 
 
 This also ensures, that our type safety handling works agnostic of what our service actually returns to the route. Since we're simply expecting a `success.Success()` object, instead of a `httpx.Response` object or a `dict` or `json`. Which makes coding to interfaces much more clean.
 
+Additionally, this makes our tests incredibly robust, we can intentionally send bad data into our functions to test a negative case, and assert:
+
+```
+assert type(result) == error.NotEnoughDataError
+```
+
 ## Decoupling Processes
 
 I would have liked to add in actual Pub/Sub architecture, but I did end up running out of time. In my ideal vision of the API I would want any request to get member copay data to instead trigger an event that queues a job. That job should then do everything in our `services/copay_retrieval_service.py` and then return another event that then notifies the end-user that the data is ready to be recieved.
